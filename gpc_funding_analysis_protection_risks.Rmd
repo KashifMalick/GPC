@@ -1,0 +1,846 @@
+---
+title: "FUNDING ANALYSIS AND PROTECTION RISKS"
+author: ""
+output:
+  html_document:
+    theme: flatly
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    df_print: paged
+---
+
+## <span style="font-weight:normal; font-size:24px; color:gray;"> UNDERSTANDING THE LINK AND THE COST OF INACTION</span>
+## <span style="font-weight:normal; font-size:20px; color:gray;"> Global Protection Cluster</span>
+
+```{r setup, include=FALSE}
+
+library(tidyverse)
+
+library(unhcrthemes)
+
+library(plotly)
+
+library(readr)
+
+
+
+# Load your data
+
+data <- read_csv("data.csv")
+
+```
+
+# Executive Summary
+
+Humanitarian crises in 2025 are seeing unprecedented levels of violence, coercion, and deprivation, putting 229 million people across 18 crisis-affected countries at serious risk. Sub-national assessments show that 39% of 125,200 areas face severe to extreme protection threats.
+
+Despite escalating needs, protection funding is falling short. In 2024, the funding gap was 51%; projections for 2025 show it may worsen, with some crises potentially seeing an 86% shortfall. This is not just a financial gap, but a systemic failure to address life-threatening risks.
+
+GPC analysis shows that a 30–50% funding cut could affect 7.5–12.6 million people, stripping 4,400–5,000 communities of key protective services like social cohesion initiatives, and leaving up to 3.5 million without critical life-saving information.
+
+These shortfalls weaken early warning systems, risk monitoring, legal assistance, and other vital protection services—directly increasing harm and reducing access to justice.
+
+HNRP analysis shows that only 33% of severe and 11% of extreme protection risks are addressed under life-saving strategic objectives. Many essential interventions fall outside these frameworks.
+
+The humanitarian system stands at a crossroads: failing to prioritize protection risks will trap millions in cycles of violence and need. Protection must be central to humanitarian efforts, guided by locally defined risk severity—not limited life-saving labels—to ensure the most urgent threats are addressed.
+
+Key insights:
+
+-   Use local protection risk severity to guide response priorities.
+
+-   Many critical protection activities fall outside traditional life-saving classifications and risk being unfunded.
+
+-   Community-based systems for violence prevention and early warning are especially vulnerable to cuts.
+
+The following sections visualize and explore these funding shortfalls in greater detail.
+
+------------------------------------------------------------------------
+
+# Global Overview 2025
+
+```{r global-overview-indicators, echo=FALSE, message=FALSE, warning=FALSE}
+library(plotly)
+library(htmltools)
+
+# Create individual indicators
+indicators <- list(
+  plot_ly(type = 'indicator', mode = 'number+text',
+          value = 272, number = list(suffix = "M", font = list(size = 40, color = "#0072CE")),
+          title = list(text = "<b>EXPOSED TO RISK</b><br><sub>in 19 countries</sub>"),
+          height = 200),
+  
+  plot_ly(type = 'indicator', mode = 'number+text',
+          value = 168, number = list(suffix = "M", font = list(size = 40, color = "#0072CE")),
+          title = list(text = "<b>PEOPLE IN NEED</b><br><sub>in 32 countries</sub>"),
+          height = 200),
+  
+  plot_ly(type = 'indicator', mode = 'number+text',
+          value = 60, number = list(suffix = "M", font = list(size = 40, color = "#0072CE")),
+          title = list(text = "<b>PEOPLE TARGETED</b>"),
+          height = 200),
+  
+  plot_ly(type = 'indicator', mode = 'number+text',
+          value = 25, number = list(suffix = "M", font = list(size = 40, color = "#0072CE")),
+          title = list(text = "<b>PEOPLE REACHED</b><br><sub>as of December 2024</sub>"),
+          height = 200)
+)
+
+# Enhanced HTML layout with dashed lines and grid styling
+browsable(
+  tagList(
+    tags$style(HTML("
+      .indicators-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: 0;
+        padding: 20px 0;
+        border-collapse: collapse;
+        width: 100%;
+        max-width: 800px;
+        margin: auto;
+      }
+
+      .indicator-box {
+        border: 2px dashed #cccccc;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 2px 2px 8px rgba(0,0,0,0.05);
+        background-color: #fafafa;
+      }
+    ")),
+    div(class = "indicators-container",
+        div(class = "indicator-box", indicators[[1]]),
+        div(class = "indicator-box", indicators[[2]]),
+        div(class = "indicator-box", indicators[[3]]),
+        div(class = "indicator-box", indicators[[4]])
+    )
+  )
+)
+
+
+```
+
+# Overview of Protection Risks
+
+Protection risks in crisis-affected countries have reached record highs, with 272 million people exposed in 19 countries. Assessments across 125,200 sub-national areas show that 39% face severe or extreme protection risks. While not all require urgent aid, many risks are preventable, highlighting the need to prioritize those most at risk.
+
+The map below provides an overview of the combined severity of the 15 protection risks monitored by Protection Clusters, and an indication of the percentage of sub-national areas in the country where population is exposed to severe or extreme levels of violence, coercion or deliberate deprivation.
+
+![](per_4_5.jpg)
+
+------------------------------------------------------------------------
+
+# Priority Protection Risks
+
+ The impact of today’s humanitarian crises extends beyond funding gaps to include escalating, life-threatening protection risks. As highlighted in the 2025 Global Humanitarian Overview, crises are defined by these risks, which demand urgent intervention. A 2024 assessment by Protection Clusters shows worsening conditions, with overlapping severe risks in countries like Sudan, oPt, Myanmar, Somalia, and DRC. Key risks include attacks on civilians, gender-based violence, displacement, and abductions, with country-specific threats such as mines and recruitment affecting millions. Protection Clusters continue to prioritize and report on these risks through regular Protection Analysis Updates. 
+The chart below shows the protection risk severity (1–5) across countries and risk types.Hover to explore severity scores for each protection risk and country.
+
+```{r heatmap-orange, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+library(plotly)
+library(readr)
+library(dplyr)
+library(htmltools)
+
+# Load and clean data
+heatmap_data <- read_csv("data_pri_risks.csv")
+
+heatmap_clean <- heatmap_data %>%
+  filter(!is.na(Country)) %>%
+  tibble::column_to_rownames("Country")
+
+heatmap_matrix <- t(as.matrix(heatmap_clean))
+
+# Orange color scale (lightest to darkest)
+orange_scale <- list(
+  list(0, "#fff5eb"),
+  list(0.25, "#fdd0a2"),
+  list(0.5, "#fdae6b"),
+  list(0.75, "#e6550d"),
+  list(1, "#a63603")
+)
+
+# Wrap plotly in a div to prevent overlap with next section
+div(style = "margin-bottom: 80px;",
+  plot_ly(
+    x = colnames(heatmap_matrix),
+    y = rownames(heatmap_matrix),
+    z = heatmap_matrix,
+    type = "heatmap",
+    colorscale = orange_scale,
+    zmin = 1, zmax = 5,
+    zauto = FALSE,
+    hovertemplate = "Country: %{x}<br>Risk: %{y}<br>Severity: %{z}<extra></extra>",
+    colorbar = list(title = "Severity")
+  ) %>%
+    layout(
+      xaxis = list(title = "Country", tickangle = 45),
+      yaxis = list(title = "Protection Risk"),
+      autosize = FALSE,
+      width = 900,
+      height = 700,
+      margin = list(l = 100, r = 60, b = 200, t = 80)
+    )
+)
+
+
+```
+
+```{r spacer-fix, results='asis', echo=FALSE}
+htmltools::HTML("<br><br><br><br><br><br><br><br><br><br>")
+```
+
+# Funding Analysis - Risk & Response
+
+## Protection Risks and Funding Gaps
+
+In 2024, the Protection Cluster received \$1.7 billion—only 49% of the \$3.5 billion required—creating a 51% funding gap. Projections for 2025, based on past funding patterns and U.S. contributions, indicate an even wider average shortfall of 67% across major crises.
+
+These cuts will severely limit protection actors’ ability to respond to urgent needs, increasing risks for millions. Though based on a limited number of countries, the GPC’s conservative analysis still provides a strong foundation for broader discussions on global protection needs.
+
+Humanitarian needs are expected to worsen, especially in conflict-affected countries like Niger, Afghanistan, Burkina Faso, Mali, Ethiopia, Cameroon, and Ukraine, where at least a quarter of subnational areas face extreme exposure to all 15 protection risks. These same countries may see a 46% average reduction in protection activities.
+
+Other countries—such as Sudan, oPt, DRC, Yemen, and Somalia—are likely facing similar challenges. The analysis underscores the urgent need for coordinated action, funding prioritization, and strategic adjustments to effectively address life-threatening protection risks.
+
+```{r funding-grouped-stacked-bars-final, echo=FALSE, message=FALSE, warning=FALSE}
+
+library(dplyr)
+library(plotly)
+library(tidyr)
+
+# Define countries in correct order
+target_countries <- c("Ethiopia", "Somalia", "DRC", "Syria", "Sudan", 
+                      "Myanmar", "South Sudan", "Yemen", "Palestine", 
+                      "Afghanistan", "Ukraine")
+
+# Filter and sort
+plot_data <- data %>%
+  filter(Country %in% target_countries) %>%
+  mutate(Country = factor(Country, levels = target_countries)) %>%
+  arrange(desc(funding_gap_2025_percent))
+
+# Create combined label vector for 2024 and 2025 data
+x_labels <- c(paste0(target_countries, " (2024)"), paste0(target_countries, " (2025)"))
+x_values <- c(paste0(target_countries, "_2024"), paste0(target_countries, "_2025"))
+
+# Prepare long data for bars
+long_data <- plot_data %>%
+  pivot_longer(cols = c(funding_reqs_2024, funding_recvd_2024, 
+                        funding_reqs_2025, funding_expected_2025),
+               names_to = "type", values_to = "value") %>%
+  mutate(
+    group = case_when(grepl("2024", type) ~ "2024", TRUE ~ "2025"),
+    stack = case_when(
+      grepl("reqs", type) ~ "Requested",
+      grepl("recvd", type) ~ "Received",
+      grepl("expected", type) ~ "Expected"
+    ),
+    x = paste0(Country, "_", group),
+    label = paste0(Country, ", ", round(value / 1e6), "M")
+  )
+
+# Prepare funding gap line
+gap_line <- plot_data %>%
+  mutate(
+    x = paste0(Country, "_2025"),
+    gap_pct = round(funding_gap_2025_percent * 100),
+    hover = paste0(Country, ", ", gap_pct, "%"),
+    label = paste0(gap_pct, "%")
+  )
+
+# Start plot
+fig <- plot_ly()
+
+# Add each bar trace explicitly in correct stacking order:
+# → Dark (received/expected) first, then light (requested) second
+
+fig <- fig %>%
+  add_trace(
+    data = filter(long_data, type == "funding_recvd_2024"),
+    x = ~x,
+    y = ~value,
+    type = "bar",
+    name = "Received - 2024",
+    marker = list(color = 'rgba(0, 76, 153, 0.8)'),
+    text = ~paste0(round(value / 1e6), "M"),
+    textposition = 'auto',
+    hovertext = ~label,
+    hoverinfo = "text"
+  ) %>%
+  add_trace(
+    data = filter(long_data, type == "funding_reqs_2024"),
+    x = ~x,
+    y = ~value,
+    type = "bar",
+    name = "Requested - 2024",
+    marker = list(color = 'rgba(173, 216, 230, 0.8)'),
+    text = ~paste0(round(value / 1e6), "M"),
+    textposition = 'auto',
+    hovertext = ~label,
+    hoverinfo = "text"
+  ) %>%
+  add_trace(
+    data = filter(long_data, type == "funding_expected_2025"),
+    x = ~x,
+    y = ~value,
+    type = "bar",
+    name = "Expected - 2025",
+    marker = list(color = 'rgba(255, 102, 0, 0.8)'),
+    text = ~paste0(round(value / 1e6), "M"),
+    textposition = 'auto',
+    hovertext = ~label,
+    hoverinfo = "text"
+  ) %>%
+  add_trace(
+    data = filter(long_data, type == "funding_reqs_2025"),
+    x = ~x,
+    y = ~value,
+    type = "bar",
+    name = "Requested - 2025",
+    marker = list(color = 'rgba(255, 204, 153, 0.8)'),
+    text = ~paste0(round(value / 1e6), "M"),
+    textposition = 'auto',
+    hovertext = ~label,
+    hoverinfo = "text"
+  )
+
+
+# Add funding gap line
+fig <- fig %>%
+  add_trace(
+    data = gap_line,
+    x = ~x,
+    y = ~funding_gap_2025_percent,
+    yaxis = "y2",
+    type = "scatter",
+    mode = "lines+markers+text",
+    line = list(color = "red", width = 3),
+    marker = list(color = "red", size = 6),
+    text = ~label,
+    hovertemplate = "%{customdata}<extra></extra>",
+    customdata = ~hover,
+    textposition = "top center",  # label over the marker
+    textfont = list(color = "red", size = 13),
+    name = "Funding Gap in 2025 (%)"
+  )
+
+# Layout
+fig <- fig %>%
+  layout(
+    title = "2024 Funding and 2025 Expected Funding with Funding Gap",
+    barmode = "stack",
+    xaxis = list(
+      title = "",
+      tickvals = x_values,
+      ticktext = x_labels,
+      tickangle = -45
+    ),
+    yaxis = list(
+      title = "",
+      showticklabels = FALSE
+    ),
+    yaxis2 = list(
+      overlaying = "y",
+      side = "right",
+      title = "",
+      tickformat = ".0%",
+      showgrid = FALSE,
+      showticklabels = FALSE
+    ),
+    legend = list(
+      orientation = "h",
+      x = 0.3,
+      y = -0.3,
+      font = list(size = 11)
+    ),
+    margin = list(b = 140, t = 80),
+    height = 650
+  )
+
+fig
+
+
+
+```
+
+```{r spacer-fix3, results='asis', echo=FALSE}
+htmltools::HTML("<br><br><br><br><br><br><br><br><br><br>")
+```
+## Countries by 2025 Expected Funding Gap (%)
+The map below shows the countries by Protection (expected) Funding Gap in 2025.
+
+
+```{r visual-bubblechart, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+library(dplyr)
+library(plotly)
+library(readr)
+
+# Read data
+data <- read_csv("data.csv")
+
+# Prepare
+data_top_gaps <- data %>%
+  rename_with(tolower) %>%
+  arrange(desc(funding_gap_2025_percent)) %>%
+  slice_head(n = 26)
+
+# Dynamic sizing for bubbles
+max_bubble <- max(data_top_gaps$funding_gap_2025_percent * 100)
+sizeref_value <- (2 * max_bubble) / (20^2)  # 20 is max bubble size
+
+# Create plot
+fig <- plot_ly(data_top_gaps,
+        type = 'scattergeo',
+        mode = 'markers',
+        locations = ~country,
+        locationmode = 'country names',
+        marker = list(
+          size = ~funding_gap_2025_percent * 100,
+          sizemode = 'area',
+          sizeref = sizeref_value,
+          sizemin = 5,
+          color = ~funding_gap_2025_percent,
+          colorscale = list(
+            c(0, "rgb(255,235,230)"),  # very light red-orange
+            c(1, "rgb(178,24,43)")      # dark red
+          ),
+          cmin = 0,
+          cmax = 1,
+          opacity = 0.7,
+          line = list(width = 0.5, color = "white"),
+          colorbar = list(
+            title = "Funding Gap (%)",
+            len = 1,  # full height
+            thickness = 20,
+            y = 0.5,
+            yanchor = "middle"
+          )
+        ),
+        text = ~paste0(country, "<br>Funding Gap: ", round(funding_gap_2025_percent * 100), "%"),
+        hoverinfo = "text"
+) %>%
+  layout(
+    title = "",
+    geo = list(
+      projection = list(type = 'equirectangular'),
+      showland = TRUE,
+      landcolor = "#f7f7f7",
+      countrycolor = "#d3d3d3",
+      showcountries = TRUE,
+      countrywidth = 0.4
+    ),
+    width = 950,
+    height = 475
+  )
+
+fig
+
+
+
+
+```
+```{r spacer-fix8, results='asis', echo=FALSE}
+htmltools::HTML("<br><br>")
+```
+## Comparison of subnational risk severity and funding shortfall
+Assessing protection risk severity is key to understanding the impact of funding shortfalls on people. Though current analysis covers limited countries, it offers a strong foundation for broader global insights. In conflict-affected countries like Niger, Afghanistan, and Ukraine, extreme protection risks affect large portions of the population, while protection activities are projected to decline by an average of 46%. Similar trends are likely in Sudan, oPt, DRC, Yemen, and Somalia. This underscores the urgent need for coordinated action, funding, and strategy adjustments to address life-threatening risks effectively.
+
+```{r dual-visual, echo=FALSE, message=FALSE, warning=FALSE}
+
+library(plotly)
+
+library(dplyr)
+
+library(readr)
+
+
+
+data <- read_csv("data_per.csv")
+
+
+
+# Clean column
+
+data <- data %>%
+
+  mutate(
+
+    percent_severe_label = paste0(round(percent_severe_4_5 * 100), "%"),
+
+    impact_label = paste0(round(as.numeric(`50_percent_impact`) * 100), "%")
+
+  )
+
+
+
+fig <- plot_ly()
+
+
+
+# Add red triangle indicators
+fig <- fig %>%
+  add_trace(
+    type = 'scatter',
+    mode = 'markers+text',
+    x = data$Country,
+    y = data$percent_severe_4_5,
+    marker = list(symbol = "triangle-up", size = 20, color = "#F2545B"),
+    text = data$percent_severe_label,
+    textposition = "top center",
+    name = "Areas under extreme harm",
+    hovertemplate = "%{x}, %{text}<extra></extra>"  # Only show country and label
+  )
+
+# Add blue bar for funding impact
+fig <- fig %>%
+  add_trace(
+    type = 'bar',
+    x = data$Country,
+    y = as.numeric(data$`50_percent_impact`),
+    text = data$impact_label,
+    textposition = "outside",
+    marker = list(color = "#ADD8E6"),
+    name = "Projected impact of 50% funding shortfall",
+    hovertemplate = "%{x}, %{text}<extra></extra>"  # Only show country and label
+  )
+
+
+
+fig <- fig %>%
+
+  layout(
+
+    title = list(text = "", font = list(size = 18)),
+
+    barmode = 'overlay',
+
+    xaxis = list(title = "", tickangle = -45),
+
+    yaxis = list(title = "Percentage", tickformat = ".0%"),
+
+    legend = list(orientation = 'h', y = -0.2),
+
+    height = 600
+
+  )
+
+
+
+fig
+
+```
+
+```{r spacer-fix2, results='asis', echo=FALSE}
+htmltools::HTML("<br><br><br><br><br><br><br><br><br><br>")
+```
+
+## Projected Impact on Protection Interventions and Affected Populations
+
+Prioritizing protection requires addressing both life-saving needs and life-threatening risks, ideally through integrated, cross-sectoral approaches. To support planning amid funding constraints, the Global Protection Cluster (GPC) conducted a two-part analysis: projected the impact of 30–50% funding cuts on protection activities, and reviewed 2025 HNRPs, identifying 584 protection-related life-saving interventions across 20 countries. The findings are stark—up to 12.6 million people may lose access to critical protection services, and proactive responses could give way to reactive ones. Key community-led systems, early warnings, and frontline actors risk severe weakening, with up to 68% fewer communities engaged in risk analysis and thousands of local staff unsupported.
+```{r dual-visual_modality, echo=FALSE, message=FALSE, warning=FALSE}
+library(plotly)
+library(readr)
+library(dplyr)
+library(tidyr)
+
+# Read and adjust the data
+modality_data <- read_csv("data_modality.csv")
+
+# Multiply by 100 to convert decimals into percentages
+modality_simple <- modality_data %>%
+  select(Modality, `30_percent`, `50_percent`) %>%
+  mutate(across(c(`30_percent`, `50_percent`), ~ .x * 100)) %>%
+  pivot_longer(cols = c(`30_percent`, `50_percent`),
+               names_to = "Scenario", values_to = "Value") %>%
+  mutate(
+    ScenarioLabel = case_when(
+      Scenario == "30_percent" ~ "30% gap scenario",
+      Scenario == "50_percent" ~ "50% gap scenario"
+    )
+  )
+
+# Create dot plot
+plot_ly(
+  modality_simple,
+  y = ~reorder(Modality, Value),
+  x = ~Value,
+  type = 'scatter',
+  mode = 'markers',
+  color = ~ScenarioLabel,
+  colors = c("30% gap scenario" = "#1f77b4", "50% gap scenario" = "#ff7f0e"),
+  marker = list(size = 10),
+  text = ~paste("Modality:", Modality,
+                "<br>Scenario:", ScenarioLabel,
+                "<br>Change:", Value, "%"),
+  hoverinfo = "text"
+) %>%
+  layout(
+    title = "Projections of reduced reach by protection modalities by scenario",
+    xaxis = list(title = "Percentage Change", tickformat = ".0f%", zeroline = TRUE),
+    yaxis = list(title = "Modality"),
+    legend = list(
+      title = list(text = ""),
+      orientation = "h",
+      x = 0.3,
+      y = -0.3,
+      font = list(size = 11)
+    ),
+    margin = list(b = 120, t = 80),
+    height = 600
+  )
+
+```
+
+```{r spacer-fix4, results='asis', echo=FALSE}
+htmltools::HTML("<br><br><br><br><br><br><br>")
+```
+
+```{r dual-visual_modality_2, echo=FALSE, message=FALSE, warning=FALSE}
+# Extract only sectoral 30% columns and coerce to numeric
+library(plotly)
+library(readr)
+library(dplyr)
+library(tidyr)
+
+# Read data
+modality_data <- read_csv("data_modality.csv")
+
+# Prepare data
+modality_sector <- modality_data %>%
+  pivot_longer(
+    cols = -Modality,
+    names_to = "Sector_Scenario",
+    values_to = "Value"
+  ) %>%
+  mutate(
+    Value = Value * 100,  # Convert -0.56 to -56%
+    AoR = case_when(
+      grepl("^cp_", Sector_Scenario) ~ "CP",
+      grepl("^gbv_", Sector_Scenario) ~ "GBV",
+      grepl("^ma_", Sector_Scenario) ~ "MA",
+      grepl("^hlp_", Sector_Scenario) ~ "HLP",
+      TRUE ~ NA_character_
+    ),
+    Scenario = case_when(
+      grepl("30_percent", Sector_Scenario) ~ "30% gap scenario",
+      grepl("50_percent", Sector_Scenario) ~ "50% gap scenario",
+      TRUE ~ NA_character_
+    )
+  ) %>%
+  filter(!is.na(AoR) & !is.na(Scenario))
+
+# Add slight jitter
+modality_sector <- modality_sector %>%
+  mutate(
+    jitter = case_when(
+      Scenario == "30% gap scenario" ~ -0.15,
+      Scenario == "50% gap scenario" ~ 0.15
+    ),
+    x_jittered = as.numeric(factor(AoR, levels = c("CP", "GBV", "HLP", "MA"))) + jitter
+  )
+
+# Build jittered dot plot
+plot_ly(
+  data = modality_sector,
+  x = ~x_jittered,
+  y = ~Modality,
+  type = 'scatter',
+  mode = 'markers',
+  symbol = ~Scenario,
+  symbols = c('circle', 'diamond'),
+  color = ~Scenario,
+  colors = c("30% gap scenario" = "#1f77b4", "50% gap scenario" = "#ff7f0e"),
+  marker = list(size = 10),
+  text = ~paste(
+    "Modality:", Modality,
+    "<br>AoR:", AoR,
+    "<br>Scenario:", Scenario,
+    "<br>Change:", round(Value), "%"
+  ),
+  hoverinfo = "text"
+) %>%
+layout(
+  title = "Projections of reduced reach by AoR and protection modalities",
+  xaxis = list(
+    title = "Area of Responsibility (AoR)",
+    tickvals = 1:4,
+    ticktext = c("CP", "GBV", "HLP", "MA")
+  ),
+  yaxis = list(title = "Modality"),
+  legend = list(
+    orientation = "h",
+    x = 0.3,
+    y = -0.2
+  ),
+  height = 700,
+  margin = list(b = 100, t = 70)
+)
+
+```
+```{r spacer-fix5, results='asis', echo=FALSE}
+htmltools::HTML("<br><br><br><br><br><br><br><br><br><br>")
+```
+Frontline humanitarian actors may face major cuts, with 2,400 to 5,400 fewer staff supported, impacting critical protection services like case management and legal aid. Community-led protection efforts could also decline, affecting up to 5,000 communities. Reduced capacity to engage on protection policies and limited access to vital information could expose 2.3 to 3.5 million people to greater risks. Though projections, the analysis of 19 countries' HNRPs highlights serious concerns for the continuation of essential protection activities.
+```{r visual-units, echo=FALSE, message=FALSE, warning=FALSE}
+library(plotly)
+library(readr)
+library(dplyr)
+library(tidyr)
+
+# Load data
+units_data <- read_csv("data_units.csv")
+
+# Prepare data
+units_long <- units_data %>%
+  pivot_longer(cols = c(`30_percent`, `50_percent`),
+               names_to = "Scenario", values_to = "Value") %>%
+  mutate(
+    Scenario = recode(Scenario,
+                      "30_percent" = "30% Gap Scenario",
+                      "50_percent" = "50% Gap Scenario"),
+    Value = Value * 100  # convert -0.25 -> -25%
+  )
+
+# Create Dumbbell Plot
+fig <- plot_ly()
+
+# Add line connecting two points
+for (u in unique(units_long$Units)) {
+  temp <- units_long %>% filter(Units == u)
+  fig <- fig %>%
+    add_trace(
+      x = temp$Value,
+      y = rep(u, 2),
+      type = 'scatter',
+      mode = 'lines',
+      line = list(color = 'gray', width = 2),
+      showlegend = FALSE,
+      hoverinfo = "none"
+    )
+}
+
+# Add points for 30% scenario
+fig <- fig %>%
+  add_trace(
+    data = units_long %>% filter(Scenario == "30% Gap Scenario"),
+    x = ~Value,
+    y = ~Units,
+    type = 'scatter',
+    mode = 'markers',
+    name = '30% Gap Scenario',
+    marker = list(color = '#1f77b4', size = 10),
+    hovertemplate = "Unit: %{y}<br>Scenario: 30% Gap<br>Change: %{x}%<extra></extra>"
+  )
+
+# Add points for 50% scenario
+fig <- fig %>%
+  add_trace(
+    data = units_long %>% filter(Scenario == "50% Gap Scenario"),
+    x = ~Value,
+    y = ~Units,
+    type = 'scatter',
+    mode = 'markers',
+    name = '50% Gap Scenario',
+    marker = list(color = '#ff7f0e', size = 10),
+    hovertemplate = "Unit: %{y}<br>Scenario: 50% Gap<br>Change: %{x}%<extra></extra>"
+  )
+
+# Layout
+fig <- fig %>%
+  layout(
+    title = "Projections of reduced reach by results",
+    xaxis = list(title = "Change (%)", zeroline = TRUE),
+    yaxis = list(title = "Unit"),
+    legend = list(orientation = "h", x = 0.3, y = -0.2),
+    height = 600,
+    margin = list(b = 80, t = 70)
+  )
+
+fig
+
+```
+
+```{r spacer-fix6, results='asis', echo=FALSE}
+htmltools::HTML("<br><br><br><br><br><br><br>")
+```
+
+In the 19 HNRPs analyzed, people-centred services are included in 100% of life-saving objectives. However, community-based protection appears in only 8 HNRPs (42%), advocacy in 3 HNRPs (16%), capacity strengthening in 8 HNRPs (42%), and identification, monitoring, and analysis in 9 HNRPs (47%). Only 7 HNRPs (37%) include all core protection modalities within their life-saving objectives.
+```{r visual-SOs, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+library(plotly)
+library(dplyr)
+
+# Data
+modality_data <- tibble::tibble(
+  Modality = c(
+    "People-centered services and assistance",
+    "Community-based Protection",
+    "Advocacy & External Engagement",
+    "Capacity Strengthening",
+    "Identification, Monitoring and Analysis",
+    "All Protection Modalities (All SOs)"
+  ),
+  Percent = c(100, 42, 16, 42, 47, 37),
+  Countries = c(
+    "All 19 HNRPs",
+    "DRC, El Salvador, Honduras, Mali, Mozambique, Sudan, Syria, Ukraine",
+    "Colombia, Honduras, Syria",
+    "Colombia, DRC, El Salvador, Guatemala, Honduras, Nigeria, Sudan, Syria",
+    "CAR, Colombia, DRC, Honduras, Mali, Mozambique, Nigeria, Sudan, Syria",
+    "Colombia, DRC, Honduras, Mali, Nigeria, Sudan, Syria"
+  )
+)
+
+# Plot with diverging colorscale
+plot_ly(modality_data,
+        x = ~Percent,
+        y = ~reorder(Modality, Percent),
+        type = 'bar',
+        orientation = 'h',
+        text = ~paste0(Percent, "%"),
+        textposition = 'inside',
+        insidetextanchor = 'middle',
+        textfont = list(color = "white"),
+        hovertext = ~paste0(
+          "<b>Modality:</b> ", Modality,
+          "<br><b>% of HNRPs:</b> ", Percent, "%",
+          "<br><b>Countries:</b> ", Countries
+        ),
+        hoverinfo = "text",
+        marker = list(
+          color = ~Percent,
+          colorscale = list(
+            c(0, 'red'),
+            c(0.5, 'lightgray'),
+            c(1, 'blue')
+          ),
+          cmin = 0,
+          cmax = 100
+        )) %>%
+  layout(
+    title = "Percentage of HNRPs Including Each Modality",
+    xaxis = list(title = "% of HNRPs", ticksuffix = "%", range = c(0, 110)),
+    yaxis = list(title = ""),
+    margin = list(l = 250),
+    height = 600,
+    showlegend = FALSE
+  )
+
+
+
+
+```
+```{r spacer-fix7, results='asis', echo=FALSE}
+htmltools::HTML("<br><br><br><br><br><br><br><br>")
+```
+
+You can read the full report at the following link: [**GPC FUNDING ANALYSIS AND PROTECTION RISKS**](https://globalprotectioncluster.org/sites/default/files/2025-04/gpc_funding_analysis_and_protection_risks_april_2025_0.pdf)
+
+
+
