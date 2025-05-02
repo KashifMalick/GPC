@@ -840,7 +840,8 @@ plot_ly(modality_data,
 htmltools::HTML("<br><br><br><br><br><br><br><br>")
 ```
 
-You can read the full report at the following link: [**GPC FUNDING ANALYSIS AND PROTECTION RISKS**](https://globalprotectioncluster.org/publications/2208/reports/report/gpc-funding-analysis-and-protection-risks-understanding-link-and)
+You can read the full report at the following link: 
+<a href="https://globalprotectioncluster.org/publications/2208/reports/report/gpc-funding-analysis-and-protection-risks-understanding-link-and" target="_blank"><strong>GPC FUNDING ANALYSIS AND PROTECTION RISKS</strong></a>
 
 
 
